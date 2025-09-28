@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Finance Manager</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <h2>💰 Personal Finance Manager</h2>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="#dashboard" class="nav-link active" data-section="dashboard">Dashboard</a></li>
+                <li><a href="#income" class="nav-link" data-section="income">Income</a></li>
+                <li><a href="#expenses" class="nav-link" data-section="expenses">Expenses</a></li>
+                <li><a href="#savings" class="nav-link" data-section="savings">Savings</a></li>
+                <li><a href="#debts" class="nav-link" data-section="debts">Debts</a></li>
+                <li><a href="#reports" class="nav-link" data-section="reports">Reports</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Dashboard Section -->
+        <section id="dashboard" class="section active">
+            <div class="container">
+                <div class="dashboard-header">
+                    <h1>Financial Dashboard</h1>
+                    <div class="date-controls">
+                        <select id="monthSelect" class="form-control">
+                            <option value="2025-01">January 2025</option>
+                            <option value="2025-02">February 2025</option>
+                            <option value="2025-03">March 2025</option>
+                            <option value="2025-04">April 2025</option>
+                            <option value="2025-05">May 2025</option>
+                            <option value="2025-06">June 2025</option>
+                            <option value="2025-07">July 2025</option>
+                            <option value="2025-08">August 2025</option>
+                            <option value="2025-09" selected>September 2025</option>
+                            <option value="2025-10">October 2025</option>
+                            <option value="2025-11">November 2025</option>
+                            <option value="2025-12">December 2025</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <!-- Summary Cards -->
+                <div class="summary-cards">
+                    <div class="card summary-card money-in-card">
+                        <div class="card__body">
+                            <h3>Money In</h3>
+                            <div class="amount-large" id="totalIncome">₹0</div>
+                            <div class="amount-subtitle">Total Income</div>
+                        </div>
+                    </div>
+                    <div class="card summary-card money-out-card">
+                        <div class="card__body">
+                            <h3>Money Out</h3>
+                            <div class="amount-large" id="totalExpenses">₹0</div>
+                            <div class="amount-subtitle">Bills + Expenses</div>
+                        </div>
+                    </div>
+                    <div class="card summary-card debts-card">
+                        <div class="card__body">
+                            <h3>Debts Paid</h3>
+                            <div class="amount-large" id="totalDebtsPaid">₹0</div>
+                            <div class="amount-subtitle">Debt Payments</div>
+                        </div>
+                    </div>
+                    <div class="card summary-card savings-card">
+                        <div class="card__body">
+                            <h3>Money Saved</h3>
+                            <div class="amount-large" id="totalSavings">₹0</div>
+                            <div class="amount-subtitle">Total Savings</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cashflow Summary -->
+                <div class="cashflow-summary">
+                    <div class="card">
+                        <div class="card__body">
+                            <h3>Cashflow Summary</h3>
+                            <div class="cashflow-calculation">
+                                <div class="cashflow-item">
+                                    <span>Total In:</span>
+                                    <span id="cashflowIn">₹0</span>
+                                </div>
+                                <div class="cashflow-item">
+                                    <span>Total Out:</span>
+                                    <span id="cashflowOut">₹0</span>
+                                </div>
+                                <div class="cashflow-item total">
+                                    <span>Difference:</span>
+                                    <span id="cashflowDifference">₹0</span>
+                                </div>
+                            </div>
+                            <div class="budget-status" id="budgetStatus">
+                                <span class="status status--info">Zero-Based Budget</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts and Quick Actions -->
+                <div class="dashboard-grid">
+                    <div class="dashboard-section">
+                        <div class="card">
+                            <div class="card__body">
+                                <h3>Category Spending Breakdown</h3>
+                                <div class="chart-container" style="position: relative; height: 300px;">
+                                    <canvas id="categoryPieChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card">
+                            <div class="card__body">
+                                <h3>Income vs Expenses</h3>
+                                <div class="chart-container" style="position: relative; height: 300px;">
+                                    <canvas id="incomeExpenseChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="dashboard-section">
+                        <div class="card">
+                            <div class="card__body">
+                                <h3>Quick Actions</h3>
+                                <div class="quick-actions">
+                                    <button class="btn btn--primary" id="addIncomeBtn">Add Income</button>
+                                    <button class="btn btn--primary" id="addExpenseBtn">Add Expense</button>
+                                    <button class="btn btn--primary" id="addSavingsBtn">Add Savings</button>
+                                    <button class="btn btn--primary" id="addDebtBtn">Add Debt</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Income Section -->
+        <section id="income" class="section">
+            <div class="container">
+                <h1>Income Management</h1>
+                
+                <div class="income-grid">
+                    <div class="add-income-section">
+                        <div class="card">
+                            <div class="card__body">
+                                <h3>Add Income Source</h3>
+                                <form id="incomeForm">
+                                    <div class="form-group">
+                                        <label class="form-label" for="incomeSource">Income Source</label>
+                                        <input type="text" id="incomeSource" class="form-control" placeholder="e.g., Paycheck, Side Hustle" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label" for="expectedAmount">Expected Amount (₹)</label>
+                                        <input type="number" id="expectedAmount" class="form-control" placeholder="45000" step="100" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label" for="actualAmount">Actual Amount (₹)</label>
+                                        <input type="number" id="actualAmount" class="form-control" placeholder="45000" step="100" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label" for="incomeCategory">Category</label>
+                                        <select id="incomeCategory" class="form-control" required>
+                                            <option value="salary">Salary</option>
+                                            <option value="freelance">Freelance</option>
+                                            <option value="business">Business</option>
+                                            <option value="investment">Investment</option>
+                                            <option value="other">Other</option>
+                                        </select>
+                                    </div>
+                                    <button type="submit" class="btn btn--primary btn--full-width">Add Income</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="income-list-section">
+                        <div class="card">
+                            <div class="card__body">
+                                <h3>Income Sources</h3>
+                                <div class="income-table-container">
+                                    <table class="data-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Source</th>
+                                                <th>Expected</th>
+                                                <th>Actual</th>
+                                                <th>Difference</th>
+                                                <th>Performance</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="incomeTableBody">
+                                            <!-- Income rows will be populated by JS -->
+                                        </tbody>
+                                        <tfoot>
+                                            <tr class="totals-row">
+                                                <td><strong>Total</strong></td>
+                                                <td id="totalExpected"><strong>₹0</strong></td>
+                                                <td id="totalActual"><strong>₹0</strong></td>
+                                                <td id="totalDifference"><strong>₹0</strong></td>
+                                                <td></td>
+                                                <td></td>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Expenses Section -->
+        <section id="expenses" class="section">
+            <div class="container">
+                <h1>Expenses & Bills</h1>
+                
+                <div class="expenses-tabs">
+                    <button class="tab-button active" data-tab="bills">Bills</button>
+                    <button class="tab-button" data-tab="expenses">Expenses</button>
+                </div>
+
+                <div class="tab-content">
+                    <!-- Bills Tab -->
+                    <div id="bills-tab" class="tab-pane active">
+                        <div class="expenses-grid">
+                            <div class="add-expense-section">
+                                <div class="card">
+                                    <div class="card__body">
+                                        <h3>Add Bill</h3>
+                                        <form id="billForm">
+                                            <div class="form-group">
+                                                <label class="form-label" for="billName">Bill Name</label>
+                                                <input type="text" id="billName" class="form-control" placeholder="e.g., Electricity, Internet" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="form-label" for="billBudgeted">Budgeted Amount (₹)</label>
+                                                <input type="number" id="billBudgeted" class="form-control" placeholder="2000" step="50" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="form-label" for="billActual">Actual Amount (₹)</label>
+                                                <input type="number" id="billActual" class="form-control" placeholder="1800" step="50" required>
+                                            </div>
+                                            <button type="submit" class="btn btn--primary btn--full-width">Add Bill</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="expense-list-section">
+                                <div class="card">
+                                    <div class="card__body">
+                                        <h3>Bills</h3>
+                                        <div id="billsList">
+                                            <!-- Bills will be populated by JS -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Expenses Tab -->
+                    <div id="expenses-tab" class="tab-pane">
+                        <div class="expenses-grid">
+                            <div class="add-expense-section">
+                                <div class="card">
+                                    <div class="card__body">
+                                        <h3>Add Expense</h3>
+                                        <form id="expenseForm">
+                                            <div class="form-group">
+                                                <label class="form-label" for="expenseName">Expense Name</label>
+                                                <input type="text" id="expenseName" class="form-control" placeholder="e.g., Groceries, Transport" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="form-label" for="expenseBudgeted">Budgeted Amount (₹)</label>
+                                                <input type="number" id="expenseBudgeted" class="form-control" placeholder="12000" step="100" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="form-label" for="expenseActual">Actual Amount (₹)</label>
+                                                <input type="number" id="expenseActual" class="form-control" placeholder="11500" step="100" required>
+                                            </div>
+                                            <button type="submit" class="btn btn--primary btn--full-width">Add Expense</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="expense-list-section">
+                                <div class="card">
+                                    <div class="card__body">
+                                        <h3>Expenses</h3>
+                                        <div id="expensesList">
+                                            <!-- Expenses will be populated by JS -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Savings Section -->
+        <section id="savings" class="section">
+            <div class="container">
+                <h1>Savings Goals</h1>
+                
+                <div class="savings-grid">
+                    <div class="add-savings-section">
+                        <div class="card">
+                            <div class="card__body">
+                                <h3>Add Savings Goal</h3>
+                                <form id="savingsForm">
+                                    <div class="form-group">
+                                        <label class="form-label" for="savingsName">Goal Name</label>
+                                        <input type="text" id="savingsName" class="form-control" placeholder="e.g., Emergency Fund" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label" for="savingsTarget">Target Amount (₹)</label>
+                                        <input type="number" id="savingsTarget" class="form-control" placeholder="100000" step="1000" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label" for="savingsCurrent">Current Amount (₹)</label>
+                                        <input type="number" id="savingsCurrent" class="form-control" placeholder="25000" step="1000" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label" for="savingsMonthly">Monthly Target (₹)</label>
+                                        <input type="number" id="savingsMonthly" class="form-control" placeholder="2500" step="500" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label" for="savingsTargetDate">Target Date</label>
+                                        <input type="date" id="savingsTargetDate" class="form-control" required>
+                                    </div>
+                                    <button type="submit" class="btn btn--primary btn--full-width">Add Savings Goal</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="savings-list-section">
+                        <div id="savingsList">
+                            <!-- Savings goals will be populated by JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Debts Section -->
+        <section id="debts" class="section">
+            <div class="container">
+                <h1>Debt Management</h1>
+                
+                <div class="debts-grid">
+                    <div class="add-debt-section">
+                        <div class="card">
+                            <div class="card__body">
+                                <h3>Add Debt</h3>
+                                <form id="debtForm">
+                                    <div class="form-group">
+                                        <label class="form-label" for="debtName">Debt Name</label>
+                                        <input type="text" id="debtName" class="form-control" placeholder="e.g., Mortgage, Car Loan" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label" for="debtTotal">Total Amount (₹)</label>
+                                        <input type="number" id="debtTotal" class="form-control" placeholder="2000000" step="10000" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label" for="debtMonthlyGoal">Monthly Goal (₹)</label>
+                                        <input type="number" id="debtMonthlyGoal" class="form-control" placeholder="30000" step="1000" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label" for="debtActualPayment">Actual Payment (₹)</label>
+                                        <input type="number" id="debtActualPayment" class="form-control" placeholder="30000" step="1000" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label" for="debtRemaining">Remaining Balance (₹)</label>
+                                        <input type="number" id="debtRemaining" class="form-control" placeholder="1800000" step="10000" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label" for="debtInterestRate">Interest Rate (%)</label>
+                                        <input type="number" id="debtInterestRate" class="form-control" placeholder="8.5" step="0.1" required>
+                                    </div>
+                                    <button type="submit" class="btn btn--primary btn--full-width">Add Debt</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="debts-list-section">
+                        <div id="debtsList">
+                            <!-- Debts will be populated by JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Reports Section -->
+        <section id="reports" class="section">
+            <div class="container">
+                <h1>Financial Reports</h1>
+                
+                <div class="reports-controls">
+                    <div class="date-range-controls">
+                        <select id="reportMonth" class="form-control">
+                            <option value="2025-09">September 2025</option>
+                        </select>
+                        <button class="btn btn--secondary" id="exportBtn">Export CSV</button>
+                    </div>
+                </div>
+                
+                <div class="reports-grid">
+                    <div class="report-section">
+                        <div class="card">
+                            <div class="card__body">
+                                <h3>Category-wise Spending</h3>
+                                <div class="chart-container" style="position: relative; height: 300px;">
+                                    <canvas id="categorySpendingChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="report-section">
+                        <div class="card">
+                            <div class="card__body">
+                                <h3>Percentage Allocation</h3>
+                                <div class="chart-container" style="position: relative; height: 300px;">
+                                    <canvas id="allocationChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="report-section">
+                        <div class="card">
+                            <div class="card__body">  
+                                <h3>Monthly Trends</h3>
+                                <div class="chart-container" style="position: relative; height: 300px;">
+                                    <canvas id="trendsChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Add Money Modal -->
+    <div id="addMoneyModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Update Savings</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="updateSavingsForm">
+                    <input type="hidden" id="savingsId">
+                    <div class="form-group">
+                        <label class="form-label" for="additionalAmount">Additional Amount (₹)</label>
+                        <input type="number" id="additionalAmount" class="form-control" placeholder="1000" step="100" required>
+                    </div>
+                    <button type="submit" class="btn btn--primary btn--full-width">Update Savings</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Container -->
+    <div id="notificationContainer" class="notification-container"></div>
+
+    <script src="app.js"></script>
+</body>
+</html>
